@@ -25,6 +25,7 @@ const mapDispatchToProps = dispatch => ({
 /* 以下のようにも記載可能だが、分かりづらい */
 // const mapDispatchToProps = { increment, decrement };
 
+/* states と actions を connect を使って関連付ける */
 export default connect(
   mapStateToProps,
   mapDispatchToProps
