@@ -1,6 +1,8 @@
 import axios from "axios";
 
 export const READ_EVENTS = "READ_EVENTS";
+export const READ_EVENT = "READ_EVENT";
+export const UPDATE_EVENT = "UPDATE_EVENT";
 export const CREATE_EVENTS = "CREATE_EVENTS";
 export const DELETE_EVENTS = "DELETE_EVENTS";
 
@@ -17,6 +19,20 @@ export const readEvents = () => async dispatch => {
 export const postEvents = values => async dispatch => {
   const response = await axios.post(`${ROOT_URL}/events${QUERYSTRING}`, values);
   dispatch({ type: CREATE_EVENTS, response });
+};
+
+export const getEvent = id => async dispatch => {
+  const response = await axios.get(`${ROOT_URL}/events/${id}${QUERYSTRING}`);
+  dispatch({ type: READ_EVENT, response });
+};
+
+export const putEvent = values => async dispatch => {
+  const id = values.id;
+  const response = await axios.put(
+    `${ROOT_URL}/events/${id}${QUERYSTRING}`,
+    values
+  );
+  dispatch({ type: UPDATE_EVENT, response });
 };
 
 export const deleteEvent = id => async dispatch => {

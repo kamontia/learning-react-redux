@@ -2,13 +2,18 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
 import { Link } from "react-router-dom";
-import { getEvents, deleteEvent, putEvent } from "../actions";
+import { getEvent, deleteEvent, putEvent } from "../actions";
 
 class EventsShow extends Component {
   constructor(props) {
     super(props);
     this.onSubmit = this.onSubmit.bind(this);
     this.onDeleteClick = this.onDeleteClick.bind(this);
+  }
+
+  componentDidMount() {
+    const { id } = this.props.match.params;
+    if (id) this.props.getEvent(id);
   }
 
   renderField(field) {
@@ -35,7 +40,7 @@ class EventsShow extends Component {
   }
 
   async onSubmit(values) {
-    await this.props.postEvents(values);
+    await this.props.putEvent(values);
     this.props.history.push("/");
   }
 
@@ -44,7 +49,7 @@ class EventsShow extends Component {
       pristine: フォームが空だとTrue
       submitting: Submit状態だとTrue
     */
-    const { handleSubmit, pristine, submitting } = this.props;
+    const { handleSubmit, pristine, submitting, invalid } = this.props;
     return (
       <form onSubmit={handleSubmit(this.onSubmit)}>
         <div>
@@ -65,7 +70,7 @@ class EventsShow extends Component {
           <input
             type="submit"
             value="Submit"
-            disabled={pristine || submitting}
+            disabled={pristine || submitting || invalid}
           ></input>
           <Link to="/">Cancel</Link>
           <Link to="/" onClick={this.onDeleteClick}>
@@ -77,12 +82,19 @@ class EventsShow extends Component {
   }
 }
 
+const mapStateToProps = (state, ownProps) => {
+  const event = state.events[ownProps.match.params.id];
+  return { initialValues: event, state };
+};
+
 const mapDispatchToProps = dispatch => ({
-  deleteEvent: values => dispatch(deleteEvent(values))
+  deleteEvent: values => dispatch(deleteEvent(values)),
+  getEvent: id => dispatch(getEvent(id)),
+  putEvent: id => dispatch(putEvent(id))
 });
 
-/* 以下のようにも記載可能だが、分かりづらい */
-// const mapDispatchToProps = { postEvents };
+/* 上記のシンタックスシュガー */
+// const mapDispatchToProps = { deleteEvent, getEvent };
 
 const validate = values => {
   const errors = {};
@@ -95,6 +107,11 @@ const validate = values => {
 
 /* states と actions を connect を使って関連付ける */
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
-)(reduxForm({ validate, form: "eventShowForm" })(EventsShow));
+)(
+  // enableReinitialize:
+  reduxForm({ validate, form: "eventShowForm", enableReinitialize: true })(
+    EventsShow
+  )
+);

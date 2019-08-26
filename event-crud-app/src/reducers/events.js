@@ -1,4 +1,10 @@
-import { READ_EVENTS, DELETE_EVENTS } from "../actions";
+import {
+  READ_EVENTS,
+  READ_EVENT,
+  DELETE_EVENTS,
+  UPDATE_EVENT,
+  CREATE_EVENTS
+} from "../actions";
 import _ from "lodash";
 
 /*
@@ -8,9 +14,16 @@ import _ from "lodash";
 
 export default (events = {}, action) => {
   switch (action.type) {
+    case CREATE_EVENTS:
     case READ_EVENTS:
+    case UPDATE_EVENT:
       // 通常のレスポンスに対して、アクセスを容易にするために'logdash'でインデックスを付ける
       return _.mapKeys(action.response.data, "id");
+
+    case READ_EVENT:
+      // {id: 1, title: "Let's have an event 1!", body: "This is the body for event 1."}
+      const data = action.response.data;
+      return { ...events, [data.id]: data };
 
     case DELETE_EVENTS:
       delete events[action.id];
