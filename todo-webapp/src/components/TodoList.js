@@ -1,16 +1,21 @@
 import React, { Component } from "react";
 
 class TodoList extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     todos: [],
-  //     newTodo: ""
-  //   };
-  // }
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      todos: []
+    };
+  }
+  componentDidMount() {
+    const todos = JSON.parse(localStorage.getItem("todos")) || [];
+    this.setState({ todos: todos });
+  }
   deleteTodo(index) {
-    this.props.del(index);
+    const todos = this.state.todos;
+    todos.splice(index, 1);
+    this.setState({ todos: todos });
+    localStorage.setItem("todos", JSON.stringify(this.state.todos));
   }
 
   render() {
@@ -18,7 +23,7 @@ class TodoList extends Component {
       <div>
         <h5>ToDo List</h5>
         <ul>
-          {this.props.todos.map((todo, i) => {
+          {this.state.todos.map((todo, i) => {
             return (
               <li key={i}>
                 {todo}

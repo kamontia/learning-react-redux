@@ -14,7 +14,9 @@ class TodoForm extends Component {
 
   addTodo() {
     if (this.state.newTodo === "") return;
-    this.props.add(this.state.newTodo);
+    const todos = JSON.parse(localStorage.getItem("todos")) || [];
+    todos.push(this.state.newTodo);
+    localStorage.setItem("todos", JSON.stringify(todos));
     this.setState({ newTodo: "" });
   }
 
