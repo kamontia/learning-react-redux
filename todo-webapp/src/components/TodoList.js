@@ -18,9 +18,20 @@ class TodoList extends Component {
     localStorage.setItem("todos", JSON.stringify(this.state.todos));
   }
 
+  addTodo() {
+    this.props.history.push("/todos/add");
+  }
+
   render() {
     return (
       <div>
+        <button
+          onClick={() => {
+            this.addTodo();
+          }}
+        >
+          ADD
+        </button>
         <h5>ToDo List</h5>
         <ul>
           {this.state.todos.map((todo, i) => {
